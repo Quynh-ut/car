@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Nhận Diện Biển Số Xe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-weight: 700;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header h1 i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .current-time {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .current-time i {
+            margin-right: 8px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .stats-card.in::before {
+            background-color: var(--success);
+        }
+        
+        .stats-card.out::before {
+            background-color: var(--info);
+        }
+        
+        .stats-card.parking::before {
+            background-color: var(--warning);
+        }
+        
+        .stats-card.total::before {
+            background-color: var(--primary);
+        }
+        
+        .stats-card h3 {
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-card h3 i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .stats-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .stats-change {
+            font-size: 12px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-change.up {
+            color: var(--success);
+        }
+        
+        .stats-change.down {
+            color: var(--danger);
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        /* Plate Recognition */
+        .plate-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        .plate-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f0f2f5, #e0e5ec);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plate-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+        }
+        
+        .plate-label {
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .plate-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 15px 0;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confirmation {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 10px;
+        }
+        
+        .vehicle-status {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .status-btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            border: none;
+            outline: none;
+        }
+        
+        .status-btn i {
+            margin-right: 8px;
+        }
+        
+        .status-btn.in {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .status-btn.out {
+            background-color: var(--info);
+            color: white;
+        }
+        
+        .status-btn.inactive {
+            background-color: #e9ecef;
+            color: var(--gray);
+        }
+        
+        .status-message {
+            text-align: center;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        
+        .status-message.waiting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            border: none;
+            outline: none;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn i {
+            margin-right: 8px;
+        }
+        
+        .action-btn.capture {
+            background-color: var(--success);
+        }
+        
+        .action-btn.camera {
+            background-color: var(--info);
+        }
+        
+        .action-btn.refresh {
+            background-color: var(--warning);
+        }
+        
+        /* Vehicle Images */
+        .vehicle-images {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .vehicle-image-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .vehicle-image-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .vehicle-image-header i {
+            margin-right: 8px;
+        }
+        
+        .vehicle-image-wrapper {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+        
+        .vehicle-image {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        
+        .vehicle-image.active {
+            display: block;
+        }
+        
+        .no-image {
+            color: var(--gray);
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .no-image i {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #dee2e6;
+        }
+        
+        /* History Section */
+        .history-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            grid-column: span 2;
+        }
+        
+        .search-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .search-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .search-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-self: flex-end;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .search-button i {
+            margin-right: 8px;
+        }
+        
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .history-table th {
+            background-color: #f8f9fa;
+            color: var(--gray);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .history-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-badge.in {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.out {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-badge.parking {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
+        
+        .page-item {
+            margin: 0 5px;
+        }
+        
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-link:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .page-link.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-link.disabled {
+            color: var(--gray);
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .vehicle-images {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-car-alt"></i> HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE</h1>
+            <div class="header-info">
+                <div class="current-time">
+                    <i class="far fa-clock"></i>
+                    <span id="current-time"></span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Cards -->
+        <div class="dashboard">
+            <div class="stats-card in">
+                <h3><i class="fas fa-sign-in-alt"></i> Xe vào hôm nay</h3>
+                <div class="stats-value" id="today-in">0</div>
+                <div class="stats-change up">
+                    <i class="fas fa-arrow-up"></i> 12% so với hôm qua
+                </div>
+            </div>
+            <div class="stats-card out">
+                <h3><i class="fas fa-sign-out-alt"></i> Xe ra hôm nay</h3>
+                <div class="stats-value" id="today-out">0</div>
+                <div class="stats-change up">
+                    <i class="fas fa-arrow-up"></i> 8% so với hôm qua
+                </div>
+            </div>
+            <div class="stats-card parking">
+                <h3><i class="fas fa-parking"></i> Xe đang gửi</h3>
+                <div class="stats-value" id="current-parking">0</div>
+                <div class="stats-change down">
+                    <i class="fas fa-arrow-down"></i> 5% so với hôm qua
+                </div>
+            </div>
+            <div class="stats-card total">
+                <h3><i class="fas fa-chart-line"></i> Tổng lượt tháng</h3>
+                <div class="stats-value" id="total-vehicles">0</div>
+                <div class="stats-change up">
+                    <i class="fas fa-arrow-up"></i> 15% so với tháng trước
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Plate Recognition Section -->
+            <section class="plate-section">
+                <h2 class="section-title"><i class="fas fa-camera"></i> NHẬN DIỆN BIỂN SỐ</h2>
+                
+                <div class="plate-display">
+                    <div class="plate-label">BIỂN SỐ XE</div>
+                    <div class="plate-number" id="plate-number">---</div>
+                    <div class="confirmation" id="confirmation">ĐANG CHỜ NHẬN DIỆN</div>
+                    
+                    <div class="vehicle-status">
+                        <button id="in-btn" class="status-btn in active">
+                            <i class="fas fa-sign-in-alt"></i> XE VÀO
+                        </button>
+                        <button id="out-btn" class="status-btn out inactive">
+                            <i class="fas fa-sign-out-alt"></i> XE RA
+                        </button>
+                    </div>
+                    
+                    <div id="status-message" class="status-message waiting">
+                        <i class="fas fa-sync-alt fa-spin"></i> Đang kết nối với camera...
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="capture-btn" class="action-btn capture">
+                        <i class="fas fa-camera"></i> Chụp ảnh
+                    </button>
+                    <button id="camera-btn" class="action-btn camera">
+                        <i class="fas fa-video"></i> Bật Camera
+                    </button>
+                    <button id="refresh-btn" class="action-btn refresh">
+                        <i class="fas fa-sync-alt"></i> Làm mới
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Vehicle Images Section -->
+            <section class="plate-section">
+                <h2 class="section-title"><i class="fas fa-images"></i> HÌNH ẢNH XE</h2>
+                
+                <div class="vehicle-images">
+                    <div class="vehicle-image-container">
+                        <div class="vehicle-image-header">
+                            <i class="fas fa-sign-in-alt"></i> XE VÀO
+                        </div>
+                        <div class="vehicle-image-wrapper">
+                            <img id="vehicle-in-image" class="vehicle-image" src="" alt="Xe vào">
+                            <div id="no-in-image" class="no-image">
+                                <i class="far fa-image"></i>
+                                <div>Chưa có hình ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-image-container">
+                        <div class="vehicle-image-header">
+                            <i class="fas fa-sign-out-alt"></i> XE RA
+                        </div>
+                        <div class="vehicle-image-wrapper">
+                            <img id="vehicle-out-image" class="vehicle-image" src="" alt="Xe ra">
+                            <div id="no-out-image" class="no-image">
+                                <i class="far fa-image"></i>
+                                <div>Chưa có hình ảnh</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- History Section -->
+        <section class="history-section">
+            <h2 class="section-title"><i class="fas fa-history"></i> LỊCH SỬ RA VÀO</h2>
+            
+            <div class="search-filters">
+                <div class="search-group">
+                    <label for="plate-number-search">Biển số xe</label>
+                    <input type="text" id="plate-number-search" class="search-input" placeholder="Nhập biển số...">
+                </div>
+                
+                <div class="search-group">
+                    <label for="from-date">Từ ngày</label>
+                    <input type="date" id="from-date" class="search-input">
+                </div>
+                
+                <div class="search-group">
+                    <label for="to-date">Đến ngày</label>
+                    <input type="date" id="to-date" class="search-input">
+                </div>
+                
+                <div class="search-group">
+                    <label for="status-filter">Trạng thái</label>
+                    <select id="status-filter" class="search-input">
+                        <option value="all">Tất cả</option>
+                        <option value="in">Xe vào</option>
+                        <option value="out">Xe ra</option>
+                        <option value="parking">Đang gửi</option>
+                    </select>
+                </div>
+                
+                <button id="search-btn" class="search-button">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Biển số xe</th>
+                            <th>Thời gian vào</th>
+                            <th>Thời gian ra</th>
+                            <th>Thời gian gửi</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- Phân trang sẽ được thêm bằng JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu
+        const sampleData = {
+            plates: [
+                "98K-028.97", "12-P1-168.88", "12-B1-768.88", "73K-999.99", 
+                "300-193.44", "300-493.44", "86-L1-105.88", "438-543.21",
+                "584-12345", "510-67890", "290-888.88", "29A-123.45"
+            ],
+            images: [
+                "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                "https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            ],
+            history: []
+        };
+
+        // Tạo dữ liệu lịch sử ngẫu nhiên
+        function generateHistory() {
+            const statuses = ["in", "out", "parking"];
+            const now = new Date();
+            
+            for (let i = 0; i < 50; i++) {
+                const plateIndex = Math.floor(Math.random() * sampleData.plates.length);
+                const imageIndex = Math.floor(Math.random() * sampleData.images.length);
+                const statusIndex = Math.floor(Math.random() * statuses.length);
+                const status = statuses[statusIndex];
+                
+                const inDate = new Date();
+                inDate.setDate(now.getDate() - Math.floor(Math.random() * 30));
+                inDate.setHours(Math.floor(Math.random() * 24));
+                inDate.setMinutes(Math.floor(Math.random() * 60));
+                
+                let outDate = null;
+                let parkingTime = null;
+                
+                if (status === "out") {
+                    outDate = new Date(inDate);
+                    outDate.setHours(inDate.getHours() + Math.floor(Math.random() * 5));
+                    outDate.setMinutes(inDate.getMinutes() + Math.floor(Math.random() * 60));
+                    
+                    const diff = Math.floor((outDate - inDate) / 60000);
+                    const hours = Math.floor(diff / 60);
+                    const minutes = diff % 60;
+                    parkingTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                } else if (status === "parking") {
+                    parkingTime = "Đang gửi";
+                }
+                
+                sampleData.history.push({
+                    id: i + 1,
+                    plate: sampleData.plates[plateIndex],
+                    inTime: inDate,
+                    outTime: status === "out" ? outDate : null,
+                    parkingTime: parkingTime,
+                    status: status,
+                    image: sampleData.images[imageIndex]
+                });
+            }
+        }
+        
+        generateHistory();
+        
+        // Biến toàn cục
+        let currentPlate = "";
+        let currentStatus = "in";
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        
+        // DOM Elements
+        const plateNumberEl = document.getElementById("plate-number");
+        const confirmationEl = document.getElementById("confirmation");
+        const statusMessageEl = document.getElementById("status-message");
+        const inBtn = document.getElementById("in-btn");
+        const outBtn = document.getElementById("out-btn");
+        const captureBtn = document.getElementById("capture-btn");
+        const cameraBtn = document.getElementById("camera-btn");
+        const refreshBtn = document.getElementById("refresh-btn");
+        const vehicleInImage = document.getElementById("vehicle-in-image");
+        const vehicleOutImage = document.getElementById("vehicle-out-image");
+        const noInImage = document.getElementById("no-in-image");
+        const noOutImage = document.getElementById("no-out-image");
+        const todayInEl = document.getElementById("today-in");
+        const todayOutEl = document.getElementById("today-out");
+        const currentParkingEl = document.getElementById("current-parking");
+        const totalVehiclesEl = document.getElementById("total-vehicles");
+        const historyBody = document.getElementById("history-body");
+        const paginationEl = document.getElementById("pagination");
+        const searchBtn = document.getElementById("search-btn");
+        const plateSearchEl = document.getElementById("plate-number-search");
+        const fromDateEl = document.getElementById("from-date");
+        const toDateEl = document.getElementById("to-date");
+        const statusFilterEl = document.getElementById("status-filter");
+        
+        // Khởi tạo ngày
+        function initDates() {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            
+            fromDateEl.valueAsDate = yesterday;
+            toDateEl.valueAsDate = today;
+        }
+        
+        // Cập nhật thời gian hiện tại
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false 
+            };
+            document.getElementById('current-time').textContent = now.toLocaleDateString('vi-VN', options);
+        }
+        
+        // Cập nhật thống kê
+        function updateStats() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const todayIn = sampleData.history.filter(item => 
+                item.status !== "parking" && item.inTime >= today
+            ).length;
+            
+            const todayOut = sampleData.history.filter(item => 
+                item.status === "out" && item.outTime >= today
+            ).length;
+            
+            const currentParking = sampleData.history.filter(item => 
+                item.status === "parking"
+            ).length;
+            
+            todayInEl.textContent = todayIn;
+            todayOutEl.textContent = todayOut;
+            currentParkingEl.textContent = currentParking;
+            totalVehiclesEl.textContent = sampleData.history.length;
+        }
+        
+        // Hiển thị lịch sử
+        function displayHistory(page = 1) {
+            currentPage = page;
+            
+            // Lọc dữ liệu
+            let filteredData = [...sampleData.history];
+            const plateSearch = plateSearchEl.value.trim().toLowerCase();
+            const fromDate = fromDateEl.valueAsDate;
+            const toDate = toDateEl.valueAsDate;
+            const statusFilter = statusFilterEl.value;
+            
+            if (plateSearch) {
+                filteredData = filteredData.filter(item => 
+                    item.plate.toLowerCase().includes(plateSearch)
+                );
+            }
+            
+            if (fromDate) {
+                filteredData = filteredData.filter(item => 
+                    item.inTime >= fromDate
+                );
+            }
+            
+            if (toDate) {
+                toDate.setHours(23, 59, 59, 999);
+                filteredData = filteredData.filter(item => 
+                    item.inTime <= toDate
+                );
+            }
+            
+            if (statusFilter !== "all") {
+                filteredData = filteredData.filter(item => 
+                    item.status === statusFilter
+                );
+            }
+            
+            // Sắp xếp theo thời gian vào mới nhất
+            filteredData.sort((a, b) => b.inTime - a.inTime);
+            
+            // Phân trang
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const startIndex = (page - 1) * itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+            
+            // Hiển thị bảng
+            historyBody.innerHTML = "";
+            
+            if (paginatedData.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="6" style="text-align: center;">Không có dữ liệu</td>`;
+                historyBody.appendChild(row);
+            } else {
+                paginatedData.forEach(item => {
+                    const row = document.createElement("tr");
+                    
+                    const inTimeStr = item.inTime.toLocaleString('vi-VN');
+                    const outTimeStr = item.outTime ? item.outTime.toLocaleString('vi-VN') : "";
+                    
+                    let statusBadge = "";
+                    if (item.status === "in") {
+                        statusBadge = `<span class="status-badge in">Đã vào</span>`;
+                    } else if (item.status === "out") {
+                        statusBadge = `<span class="status-badge out">Đã ra</span>`;
+                    } else {
+                        statusBadge = `<span class="status-badge parking">Đang gửi</span>`;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td><strong>${item.plate}</strong></td>
+                        <td>${inTimeStr}</td>
+                        <td>${outTimeStr}</td>
+                        <td>${item.parkingTime}</td>
+                        <td>${statusBadge}</td>
+                    `;
+                    
+                    historyBody.appendChild(row);
+                });
+            }
+            
+            // Hiển thị phân trang
+            renderPagination(totalPages);
+        }
+        
+        // Hiển thị phân trang
+        function renderPagination(totalPages) {
+            paginationEl.innerHTML = "";
+            
+            if (totalPages <= 1) return;
+            
+            // Nút Previous
+            const prevBtn = document.createElement("li");
+            prevBtn.className = "page-item";
+            prevBtn.innerHTML = `<a class="page-link ${currentPage === 1 ? 'disabled' : ''}" href="#"><i class="fas fa-chevron-left"></i></a>`;
+            prevBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    displayHistory(currentPage - 1);
+                }
+            });
+            paginationEl.appendChild(prevBtn);
+            
+            // Các nút trang
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                const firstBtn = document.createElement("li");
+                firstBtn.className = "page-item";
+                firstBtn.innerHTML = `<a class="page-link" href="#">1</a>`;
+                firstBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    displayHistory(1);
+                });
+                paginationEl.appendChild(firstBtn);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement("li");
+                    ellipsis.className = "page-item";
+                    ellipsis.innerHTML = `<span class="page-link disabled">...</span>`;
+                    paginationEl.appendChild(ellipsis);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement("li");
+                pageBtn.className = "page-item";
+                pageBtn.innerHTML = `<a class="page-link ${i === currentPage ? 'active' : ''}" href="#">${i}</a>`;
+                pageBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    displayHistory(i);
+                });
+                paginationEl.appendChild(pageBtn);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement("li");
+                    ellipsis.className = "page-item";
+                    ellipsis.innerHTML = `<span class="page-link disabled">...</span>`;
+                    paginationEl.appendChild(ellipsis);
+                }
+                
+                const lastBtn = document.createElement("li");
+                lastBtn.className = "page-item";
+                lastBtn.innerHTML = `<a class="page-link" href="#">${totalPages}</a>`;
+                lastBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    displayHistory(totalPages);
+                });
+                paginationEl.appendChild(lastBtn);
+            }
+            
+            // Nút Next
+            const nextBtn = document.createElement("li");
+            nextBtn.className = "page-item";
+            nextBtn.innerHTML = `<a class="page-link ${currentPage === totalPages ? 'disabled' : ''}" href="#"><i class="fas fa-chevron-right"></i></a>`;
+            nextBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    displayHistory(currentPage + 1);
+                }
+            });
+            paginationEl.appendChild(nextBtn);
+        }
+        
+        // Mô phỏng nhận diện biển số
+        function simulatePlateRecognition() {
+            const randomPlate = sampleData.plates[Math.floor(Math.random() * sampleData.plates.length)];
+            const randomImage = sampleData.images[Math.floor(Math.random() * sampleData.images.length)];
+            
+            currentPlate = randomPlate;
+            plateNumberEl.textContent = randomPlate;
+            confirmationEl.textContent = "XÁC NHẬN BIỂN SỐ";
+            confirmationEl.style.color = "#4cc9f0";
+            statusMessageEl.textContent = "Đã nhận diện thành công!";
+            statusMessageEl.className = "status-message success";
+            
+            if (currentStatus === "in") {
+                vehicleInImage.src = randomImage;
+                vehicleInImage.classList.add("active");
+                noInImage.style.display = "none";
+                
+                // Hiệu ứng pulse cho xe vào
+                vehicleInImage.classList.add("pulse");
+                setTimeout(() => {
+                    vehicleInImage.classList.remove("pulse");
+                }, 2000);
+            } else {
+                vehicleOutImage.src = randomImage;
+                vehicleOutImage.classList.add("active");
+                noOutImage.style.display = "none";
+                
+                // Hiệu ứng pulse cho xe ra
+                vehicleOutImage.classList.add("pulse");
+                setTimeout(() => {
+                    vehicleOutImage.classList.remove("pulse");
+                }, 2000);
+            }
+            
+            // Thêm vào lịch sử
+            const now = new Date();
+            const newId = sampleData.history.length > 0 ? 
+                Math.max(...sampleData.history.map(item => item.id)) + 1 : 1;
+            
+            let parkingTime = null;
+            let outTime = null;
+            let status = currentStatus;
+            
+            if (currentStatus === "out") {
+                // Tìm xe vào tương ứng
+                const matchingIn = sampleData.history.find(item => 
+                    item.plate === randomPlate && item.status === "parking"
+                );
+                
+                if (matchingIn) {
+                    outTime = now;
+                    matchingIn.outTime = outTime;
+                    matchingIn.status = "out";
+                    
+                    const diff = Math.floor((outTime - matchingIn.inTime) / 60000);
+                    const hours = Math.floor(diff / 60);
+                    const minutes = diff % 60;
+                    parkingTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    matchingIn.parkingTime = parkingTime;
+                } else {
+                    status = "in"; // Nếu không tìm thấy xe vào, coi như xe vào
+                }
+            }
+            
+            if (status === "in") {
+                sampleData.history.unshift({
+                    id: newId,
+                    plate: randomPlate,
+                    inTime: now,
+                    outTime: null,
+                    parkingTime: "Đang gửi",
+                    status: "parking",
+                    image: randomImage
+                });
+            }
+            
+            updateStats();
+            displayHistory(1);
+        }
+        
+        // Xử lý sự kiện
+        inBtn.addEventListener("click", () => {
+            currentStatus = "in";
+            inBtn.classList.add("active");
+            inBtn.classList.remove("inactive");
+            outBtn.classList.add("inactive");
+            outBtn.classList.remove("active");
+            statusMessageEl.textContent = "Sẵn sàng nhận diện xe vào...";
+            statusMessageEl.className = "status-message waiting";
+        });
+        
+        outBtn.addEventListener("click", () => {
+            currentStatus = "out";
+            outBtn.classList.add("active");
+            outBtn.classList.remove("inactive");
+            inBtn.classList.add("inactive");
+            inBtn.classList.remove("active");
+            statusMessageEl.textContent = "Sẵn sàng nhận diện xe ra...";
+            statusMessageEl.className = "status-message waiting";
+        });
+        
+        captureBtn.addEventListener("click", simulatePlateRecognition);
+        
+        cameraBtn.addEventListener("click", () => {
+            statusMessageEl.textContent = "Đang kết nối với camera...";
+            statusMessageEl.className = "status-message waiting";
+            setTimeout(() => {
+                statusMessageEl.textContent = currentStatus === "in" ? 
+                    "Sẵn sàng nhận diện xe vào..." : "Sẵn sàng nhận diện xe ra...";
+            }, 1500);
+        });
+        
+        refreshBtn.addEventListener("click", () => {
+            plateNumberEl.textContent = "---";
+            confirmationEl.textContent = "ĐANG CHỜ NHẬN DIỆN";
+            confirmationEl.style.color = "#4361ee";
+            statusMessageEl.textContent = currentStatus === "in" ? 
+                "Sẵn sàng nhận diện xe vào..." : "Sẵn sàng nhận diện xe ra...";
+            statusMessageEl.className = "status-message waiting";
+            
+            if (currentStatus === "in") {
+                vehicleInImage.classList.remove("active");
+                noInImage.style.display = "flex";
+            } else {
+                vehicleOutImage.classList.remove("active");
+                noOutImage.style.display = "flex";
+            }
+        });
+        
+        searchBtn.addEventListener("click", () => {
+            displayHistory(1);
+        });
+        
+        // Khởi tạo
+        initDates();
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+        updateStats();
+        displayHistory();
+        
+        // Mô phỏng nhận diện tự động mỗi 10 giây
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30% chance to auto detect
+                simulatePlateRecognition();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
