@@ -1,0 +1,120 @@
+{
+  "timestamp": "2025-08-30T20:58:40.823902",
+  "structure": "car/smart_parking/",
+  "summary": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "details": [
+    {
+      "test": "Cau truc Thu muc",
+      "success": true,
+      "message": "Tat ca file va thu muc can thiet deu co",
+      "timestamp": "2025-08-30T20:58:37.941632"
+    },
+    {
+      "test": "File Model Custom",
+      "success": true,
+      "message": "Tim thay model, kich thuoc: 11.6MB",
+      "timestamp": "2025-08-30T20:58:37.942638"
+    },
+    {
+      "test": "Ket noi Database",
+      "success": true,
+      "message": "Tim thay 4 ban ghi",
+      "timestamp": "2025-08-30T20:58:37.964635"
+    },
+    {
+      "test": "API Goc",
+      "success": true,
+      "message": "Trang thai: OK",
+      "timestamp": "2025-08-30T20:58:38.286865"
+    },
+    {
+      "test": "Suc khoe Image API",
+      "success": true,
+      "message": "Model Custom: Co, Ham da tai: False",
+      "timestamp": "2025-08-30T20:58:38.318240"
+    },
+    {
+      "test": "API Xe Vao",
+      "success": true,
+      "message": "Da tao entry ID: 5",
+      "timestamp": "2025-08-30T20:58:38.555999"
+    },
+    {
+      "test": "API Thong ke - Thong ke Hang ngay",
+      "success": true,
+      "message": "Cac truong: ['today_in', 'today_out', 'current_parking', 'date']",
+      "timestamp": "2025-08-30T20:58:38.611104"
+    },
+    {
+      "test": "API Thong ke - Thong ke Hang thang",
+      "success": true,
+      "message": "Cac truong: ['monthly_total', 'vehicle_types', 'month']",
+      "timestamp": "2025-08-30T20:58:38.628103"
+    },
+    {
+      "test": "API Thong ke - Thong ke Tong hop",
+      "success": true,
+      "message": "Cac truong: ['today_entries', 'yesterday_entries', 'current_vehicles', 'total_entries', 'change_percent', 'date']",
+      "timestamp": "2025-08-30T20:58:38.644103"
+    },
+    {
+      "test": "API Lich su Xe",
+      "success": true,
+      "message": "So ban ghi: 5",
+      "timestamp": "2025-08-30T20:58:38.669102"
+    },
+    {
+      "test": "Upload va Xu ly Anh",
+      "success": true,
+      "message": "Tim thay 1 bien so: 51G-678.90",
+      "timestamp": "2025-08-30T20:58:38.737471"
+    },
+    {
+      "test": "API Xe Vao",
+      "success": true,
+      "message": "Da tao entry ID: 6",
+      "timestamp": "2025-08-30T20:58:38.756478"
+    },
+    {
+      "test": "API Thong ke - Thong ke Hang ngay",
+      "success": true,
+      "message": "Cac truong: ['today_in', 'today_out', 'current_parking', 'date']",
+      "timestamp": "2025-08-30T20:58:39.771096"
+    },
+    {
+      "test": "API Thong ke - Thong ke Hang thang",
+      "success": true,
+      "message": "Cac truong: ['monthly_total', 'vehicle_types', 'month']",
+      "timestamp": "2025-08-30T20:58:39.776098"
+    },
+    {
+      "test": "API Thong ke - Thong ke Tong hop",
+      "success": true,
+      "message": "Cac truong: ['today_entries', 'yesterday_entries', 'current_vehicles', 'total_entries', 'change_percent', 'date']",
+      "timestamp": "2025-08-30T20:58:39.783112"
+    },
+    {
+      "test": "API Lich su Xe",
+      "success": true,
+      "message": "So ban ghi: 6",
+      "timestamp": "2025-08-30T20:58:39.789139"
+    },
+    {
+      "test": "API Xe Ra",
+      "success": true,
+      "message": "Thoi gian gui: 0:00:02.063811",
+      "timestamp": "2025-08-30T20:58:40.822908"
+    },
+    {
+      "test": "Quy trinh Hoan chinh",
+      "success": true,
+      "message": "Bien so: 51G-678.90, Entry ID: 6",
+      "timestamp": "2025-08-30T20:58:40.822908"
+    }
+  ]
+}
